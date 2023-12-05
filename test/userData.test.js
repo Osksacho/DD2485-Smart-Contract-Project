@@ -52,4 +52,17 @@ describe('BlockThoughs Contract Userdata tests', function () {
       'Username or address already exists'
     );
   });
+
+  it('Should not allow user creation multiple times', async function () {
+    const username = 'oskar felixsson';
+    const ipfsImageRef = ethers.encodeBytes32String('ipfsHash');
+
+    await blockThoughts.createUserData(username, ipfsImageRef);
+
+    const username2 = 'oskar felixsson2';
+
+    await expect(blockThoughts.createUserData(username2, ipfsImageRef)).to.be.revertedWith(
+      'Username or address already exists'
+    );
+  });
 });
