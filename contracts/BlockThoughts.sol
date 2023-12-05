@@ -1,7 +1,7 @@
 pragma solidity ^0.8.9;
 
 contract BlockThoughts {
-    struct Userdata {
+    struct UserData {
         string username;
         bytes32 ipfsImageRef;
     }
@@ -12,18 +12,18 @@ contract BlockThoughts {
         bytes32[] commentsLinks;
     }
 
-    mapping(address => Userdata) public usersData;
+    mapping(address => UserData) public usersData;
     mapping(uint64 => Thread) public threads;
     address[] public userAddresses;
     uint64 threadCounter;
     
     function addThread(string memory _subject) public {
-        require(_subject.length > 0, "Thread must have a subject.");
+        require(bytes(_subject).length > 0, "Thread must have a subject.");
         uint64 id = threadCounter++;
         threads[id] = Thread(id, _subject, new bytes32[](0));
     }
 
-    function addComment(uint64 _threadId , string memory _commentLink) public {
+    function addComment(uint64 _threadId , bytes32 _commentLink) public {
         require(_threadId < threadCounter, "Invalid thread id.");
         threads[_threadId].commentsLinks.push(_commentLink);
     }
@@ -36,7 +36,7 @@ contract BlockThoughts {
         return result;
     }
 
-    function getComments (uint64 _threadId) public view returns (bytes32[]) {
+    function getComments (uint64 _threadId) public view returns (bytes32[] memory) {
         return threads[_threadId].commentsLinks;
     }
 
@@ -45,7 +45,7 @@ contract BlockThoughts {
     /// @dev This function returns the user data associated with the provided address
     /// @param adr The Ethereum address for which data is being retrieved
     /// @return UserData The user data (username and ipfsImageRef)
-    function getUserData(address adr) public view returns(Userdata memory) {
+    function getUserData(address adr) public view returns(UserData memory) {
         return usersData[adr];
     }
 
@@ -67,7 +67,7 @@ contract BlockThoughts {
     /// @return bool Returns true if the username can be used; otherwise, returns false
     function _canCreateUserData(string memory username) private view returns (bool) {
         for (uint i = 0; i < userAddresses.length; i++) {
-            address adr userAddresses[i];
+            address adr = userAddresses[i];
             if (adr == msg.sender) {
                 return false;
             }
