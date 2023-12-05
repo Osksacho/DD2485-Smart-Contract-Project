@@ -28,6 +28,7 @@ contract BlockThoughts {
         threads[_threadId].commentsLinks.push(_commentLink);
     }
 
+    // TODO only get id and subj, not comments
     function getThreads () public view returns (Thread[] memory) {
         Thread[] memory result = new Thread[](threadCounter);
         for (uint64 i = 0; i < threadCounter; i++) {
