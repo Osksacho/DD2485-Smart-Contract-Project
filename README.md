@@ -43,7 +43,6 @@ Now you can start a local blockchain using
 ```
 npx hardhat node
 ```
-.
 
 In another terminal you can now deploy the contract with the command (use network-name "localhost" to deploy on local blockchain).
 ```
