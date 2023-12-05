@@ -1,0 +1,27 @@
+{
+  "name": "blockthoughts",
+  "version": "1.0.0",
+  "description": "A forum on-chain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Osksacho/DD2485-Smart-Contract-Project.git"
+  },
+  "keywords": [
+    "smart-contract",
+    "blockchain",
+    "forum"
+  ],
+  "author": "Felix Qvarfordt, Oskar Svanström",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Osksacho/DD2485-Smart-Contract-Project/issues"
+  },
+  "homepage": "https://github.com/Osksacho/DD2485-Smart-Contract-Project#readme",
+  "devDependencies": {
+    "hardhat": "^2.19.1"
+  }
+}
