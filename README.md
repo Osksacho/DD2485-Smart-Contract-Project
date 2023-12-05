@@ -39,12 +39,14 @@ git clone git@github.com:Osksacho/DD2485-Smart-Contract-Project.git
 npm install
 ```
 
+
 Now you can start a local blockchain using
 ```
 npx hardhat node
 ```
 
-In another terminal you can now deploy the contract with the command (use network-name "localhost" to deploy on local blockchain).
+In another terminal you can now compile and deploy the contract with the command (use network-name "localhost" to deploy on local blockchain).
 ```
+npx hardhat compile
 npx hardhat run scripts/deploy.js --network [network-name]
 ```
