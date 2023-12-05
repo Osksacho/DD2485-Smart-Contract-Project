@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Osksacho/DD2485-Smart-Contract-Project#readme",
   "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "hardhat": "^2.19.1"
   }
 }
