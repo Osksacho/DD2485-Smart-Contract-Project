@@ -27,3 +27,25 @@ The protocol proposal must be done through a pull-request before Nov 15, sunset 
 |(BONUS) outreach: the students outreach to the crypto world about their protocol | Yes | No |
 |(BONUS) real-world: the protocol is deployed on mainnet and IPFS | Yes | No |
 |(BONUS) DApp/UX: the protocol contains user interface application | Yes | No |
+
+
+
+## How to test
+
+Start by cloning the repository and install all dependencies 
+
+```
+git clone git@github.com:Osksacho/DD2485-Smart-Contract-Project.git
+npm install
+```
+
+Now you can start a local blockchain using
+```
+npx hardhat node
+```
+.
+
+In another terminal you can now deploy the contract with the command (use network-name "localhost" to deploy on local blockchain).
+```
+npx hardhat run scripts/deploy.js --network [network-name]
+```
