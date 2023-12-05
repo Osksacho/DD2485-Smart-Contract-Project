@@ -48,7 +48,7 @@ describe('BlockThoughs Contract Userdata tests', function () {
     const duplicateUsername = 'oskar felixsson';
     const duplicateIpfsImageRef = ethers.encodeBytes32String('ipfsHash2');
 
-    await expect(blockThoughts.createUserData(duplicateUsername, duplicateIpfsImageRef)).to.be.revertedWith(
+    await expect(blockThoughts.connect(addr1).createUserData(duplicateUsername, duplicateIpfsImageRef)).to.be.revertedWith(
       'Username or address already exists'
     );
   });
