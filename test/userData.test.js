@@ -65,4 +65,60 @@ describe('BlockThoughs Contract Userdata tests', function () {
       'Username or address already exists'
     );
   });
+  
+  it('Should be possible to add and retrieve threads', async function () {
+
+    await blockThoughts.addThread("My thoughts on tests");
+	await blockThoughts.addThread("Everything about cars");
+	
+	[id, sub] = (await blockThoughts.getThreads())[0];
+	
+    await expect(id).to.equal(0);
+	await expect(sub).to.equal("My thoughts on tests");
+  });
+  
+  it('Should be possible to add and retrieve comments', async function () {
+	const ipfsCommentLink = ethers.encodeBytes32String('ipfsHash');
+
+    await blockThoughts.addThread("My thoughts on tests");
+	await blockThoughts.addThread("Everything about cars");
+	
+	await blockThoughts.addComment(1, ipfsCommentLink);
+	
+    await expect((await blockThoughts.getComments(1))[0]).to.equal(ipfsCommentLink);
+
+  });
+  
+  it('Cannot get comments with invalid thread ids', async function () {
+	const ipfsCommentLink = ethers.encodeBytes32String('ipfsHash');
+
+    await blockThoughts.addThread("My thoughts on tests");
+	await blockThoughts.addThread("Everything about cars");
+	
+	await blockThoughts.addComment(1, ipfsCommentLink);
+	
+
+	await expect(blockThoughts.getComments(2)).to.be.revertedWith(
+		'Invalid thread id.'
+	);
+  });
+  
+  it('Cannot add comments with invalid thread ids', async function () {
+	const ipfsCommentLink = ethers.encodeBytes32String('ipfsHash');
+
+    await blockThoughts.addThread("My thoughts on tests");
+	await blockThoughts.addThread("Everything about cars");
+	
+	await expect(blockThoughts.addComment(2, ipfsCommentLink)).to.be.revertedWith(
+		'Invalid thread id.'
+	);
+  });
+  
+  it('Should not be possible to add threads with no subject line', async function () {
+    
+	await expect(blockThoughts.addThread("")).to.be.revertedWith(
+		'Thread must have a subject.'
+	);
+  });
+  
 });

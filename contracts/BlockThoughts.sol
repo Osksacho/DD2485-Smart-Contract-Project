@@ -9,26 +9,26 @@ contract BlockThoughts {
     struct Thread {
         uint64 id;
         string subject;
-        bytes32[] commentsLinks;
     }
 
     mapping(address => UserData) public usersData;
-    mapping(uint64 => Thread) public threads;
     address[] public userAddresses;
     uint64 threadCounter;
-    
+	Thread[] threads;
+	bytes32[][] threadCommentLinks;
+	
     function addThread(string memory _subject) public {
         require(bytes(_subject).length > 0, "Thread must have a subject.");
-        uint64 id = threadCounter++;
-        threads[id] = Thread(id, _subject, new bytes32[](0));
+        threads.push(Thread(threadCounter, _subject));
+		threadCommentLinks.push(new bytes32[](0));
+        threadCounter++;
     }
 
     function addComment(uint64 _threadId , bytes32 _commentLink) public {
         require(_threadId < threadCounter, "Invalid thread id.");
-        threads[_threadId].commentsLinks.push(_commentLink);
+        threadCommentLinks[_threadId].push(_commentLink);
     }
 
-    // TODO only get id and subj, not comments
     function getThreads () public view returns (Thread[] memory) {
         Thread[] memory result = new Thread[](threadCounter);
         for (uint64 i = 0; i < threadCounter; i++) {
@@ -38,8 +38,10 @@ contract BlockThoughts {
     }
 
     function getComments (uint64 _threadId) public view returns (bytes32[] memory) {
-        return threads[_threadId].commentsLinks;
+        require(_threadId < threadCounter, "Invalid thread id.");
+		return threadCommentLinks[_threadId];
     }
+
 
 
     /// @notice Retrieves user data from an Ethereum address, or empty userdata if user does not exist
