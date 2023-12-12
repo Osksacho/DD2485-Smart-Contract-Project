@@ -1,10 +1,10 @@
-import { defineComponent } from "vue"
-import SimpleThreadView from "../views/SimpleThreadView.jsx";
+import { defineComponent } from 'vue';
+import SimpleThreadView from '../views/SimpleThreadView.jsx';
+import UserProfileView from '../views/UserProfileView.jsx';
 
 const Browser = defineComponent({
-  
   props: {
-    model: Object
+    model: Object,
   },
 
   setup(props) {
@@ -14,10 +14,19 @@ const Browser = defineComponent({
       }
       
       return (
-        props.model.threads.map(threadToView)
+        <div>
+          <div style="position: fixed; top: 20px; right: 20px;">
+            <UserProfileView model={props.model}/>
+          </div>
+
+          <div>
+            {props.model.threads.map(threadToView)}
+          </div>
+        </div>
       );
     };
-  },
+},
 });
+
 
 export default Browser;
