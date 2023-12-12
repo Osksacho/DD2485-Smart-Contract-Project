@@ -16,12 +16,13 @@ describe('BlockThoughs Contract Userdata tests', function () {
     blockThoughts = await BlockThoughts.deploy();
   });
 
-  // Tests createUserData and getUserdata
   it('Should create user data', async function () {
     const username = 'oskar felixsson';
+    const username2 = 'oskar felixsson2'
     const ipfsImageRef = ethers.encodeBytes32String('ipfsHash');
     
     await blockThoughts.createUserData(username, ipfsImageRef);
+    await blockThoughts.connect(addr1).createUserData(username2, ipfsImageRef);
 
     const userData = await blockThoughts.getUserData(owner.address);
 
@@ -38,7 +39,6 @@ describe('BlockThoughs Contract Userdata tests', function () {
       );
   });
 
-  // Tests _canCreateUserData
   it('Should not allow creation of duplicate user data', async function () {
     const username = 'oskar felixsson';
     const ipfsImageRef = ethers.encodeBytes32String('ipfsHash');
