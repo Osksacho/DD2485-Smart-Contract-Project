@@ -85,7 +85,7 @@ describe('BlockThoughs Contract Userdata tests', function () {
 	
 	await blockThoughts.addComment(1, ipfsCommentLink);
 	
-    await expect((await blockThoughts.getComments(1))[0]).to.equal(ipfsCommentLink);
+    await expect((await blockThoughts.getComments(1))[0].commentLink).to.equal(ipfsCommentLink);
 
   });
   

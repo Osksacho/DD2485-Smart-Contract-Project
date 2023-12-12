@@ -6,45 +6,72 @@ contract BlockThoughts {
         bytes32 ipfsImageRef;
     }
     
-    struct Thread {
-        uint64 id;
+	struct Comment {
+		address poster;
+		bytes32 commentLink;
+	}
+	
+	struct ThreadInfo {
+		uint64 id;
         string subject;
-    }
+		address poster;
+	}
+	
+    struct Thread {
+		ThreadInfo info;
+        Comment[] comments;
+	}
 
     mapping(address => UserData) public usersData;
     address[] public userAddresses;
     uint64 threadCounter;
 	Thread[] threads;
-	bytes32[][] threadCommentLinks;
 	
     /// @param _subject The subject of the thread.
     function addThread(string memory _subject) public {
-        require(bytes(_subject).length > 0, "Thread must have a subject.");
-        threads.push(Thread(threadCounter, _subject));
-		threadCommentLinks.push(new bytes32[](0));
-        threadCounter++;
-    }
+		require(bytes(_subject).length > 0, "Thread must have a subject.");
 
-    /// @param _threadId The thread id for which to add a comment. _commentLink The ipfs hash to the stored comment
-    function addComment(uint64 _threadId , bytes32 _commentLink) public {
+		ThreadInfo memory newThreadInfo = ThreadInfo({
+			id: threadCounter,
+			subject: _subject,
+			poster: msg.sender
+		});
+
+		// Push an empty thread and then initialize its fields
+		threads.push();
+		Thread storage newThread = threads[threads.length - 1];
+		newThread.info = newThreadInfo;
+		// The comments array is automatically initialized as an empty array in storage
+
+		threadCounter++;
+	}
+
+    function addComment(uint64 _threadId, bytes32 _commentLink) public {
+		require(_threadId < threadCounter, "Invalid thread id.");
+
+		Thread storage thread = threads[_threadId];
+
+		Comment memory newComment = Comment({
+			poster: msg.sender,
+			commentLink: _commentLink
+		});
+
+		thread.comments.push(newComment);
+	}
+
+    function getThreads() public view returns (ThreadInfo[] memory) {
+		ThreadInfo[] memory infos = new ThreadInfo[](threadCounter);
+
+		for (uint64 i = 0; i < threadCounter; i++) {
+			infos[i] = threads[i].info;
+		}
+
+		return infos;
+	}
+
+    function getComments (uint64 _threadId) public view returns (Comment[] memory) {
         require(_threadId < threadCounter, "Invalid thread id.");
-        threadCommentLinks[_threadId].push(_commentLink);
-    }
-
-    /// @return Thread[] An array of threads (id and subject)
-    function getThreads () public view returns (Thread[] memory) {
-        Thread[] memory result = new Thread[](threadCounter);
-        for (uint64 i = 0; i < threadCounter; i++) {
-            result[i] = threads[i];
-        }
-        return result;
-    }
-
-    /// @param _threadId The thread id. Recieve these get from getThreads()
-    /// @return bytes32[] The ipfs hashes
-    function getComments (uint64 _threadId) public view returns (bytes32[] memory) {
-        require(_threadId < threadCounter, "Invalid thread id.");
-		return threadCommentLinks[_threadId];
+		return threads[_threadId].comments;
     }
 
     /// @param adr The Ethereum address corresponding to the user data to retrieve
