@@ -27,6 +27,7 @@ contract BlockThoughts {
     uint64 threadCounter;
 	Thread[] threads;
 	
+    /// @param _subject The subject of the thread.
     function addThread(string memory _subject) public {
 		require(bytes(_subject).length > 0, "Thread must have a subject.");
 
@@ -73,18 +74,12 @@ contract BlockThoughts {
 		return threads[_threadId].comments;
     }
 
-
-
-    /// @notice Retrieves user data from an Ethereum address, or empty userdata if user does not exist
-    /// @dev This function returns the user data associated with the provided address
-    /// @param adr The Ethereum address for which data is being retrieved
+    /// @param adr The Ethereum address corresponding to the user data to retrieve
     /// @return UserData The user data (username and ipfsImageRef)
     function getUserData(address adr) public view returns(UserData memory) {
         return usersData[adr];
     }
 
-    /// @notice Create user data associating username and IPFS image reference with sender's address
-    /// @dev This function creates user data using the provided username and IPFS image reference
     /// @param username The username of the user being created
     /// @param ipfsImageRef The IPFS hash reference for the user's image
     function createUserData(string memory username, bytes32 ipfsImageRef) public {
@@ -96,7 +91,6 @@ contract BlockThoughts {
         userAddresses.push(msg.sender);
     }
 
-    /// @dev This internal function verifies if the provided username is available for use, and an address has not already created a user
     /// @param username The username to be checked for availability
     /// @return bool Returns true if the username can be used; otherwise, returns false
     function _canCreateUserData(string memory username) private view returns (bool) {
