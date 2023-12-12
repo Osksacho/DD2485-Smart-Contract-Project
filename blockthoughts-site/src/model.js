@@ -1,13 +1,22 @@
 
+class UserData {
+    constructor(username, image){
+        this.username = username;
+        this.image = image;
+    }
+}
+
 class Thread {
-  constructor(id, subject) {
-    this.id = id;
+  constructor(username, subject) {
+    this.username = username;
     this.subject = subject;
   }
 }
 
 class Model {
   constructor() {  
+    this.key = 0;
+    this.userData = new UserData(null, null);
     this.threads = [];
     this.currentThreadId = -1;
     this.currentThreadComments = [];
@@ -28,6 +37,13 @@ class Model {
     // Just for tests
    }
 
+   // Placeholder
+   submitUserData(username, image){
+    this.userData.username = username;
+    this.userData.image = image;
+
+    console.log(username);
+   }
 
    getThreads() {
     return [];
