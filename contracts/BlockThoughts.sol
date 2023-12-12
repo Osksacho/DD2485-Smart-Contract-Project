@@ -17,6 +17,7 @@ contract BlockThoughts {
 	Thread[] threads;
 	bytes32[][] threadCommentLinks;
 	
+    /// @param _subject The subject of the thread.
     function addThread(string memory _subject) public {
         require(bytes(_subject).length > 0, "Thread must have a subject.");
         threads.push(Thread(threadCounter, _subject));
@@ -24,11 +25,13 @@ contract BlockThoughts {
         threadCounter++;
     }
 
+    /// @param _threadId The thread id for which to add a comment. _commentLink The ipfs hash to the stored comment
     function addComment(uint64 _threadId , bytes32 _commentLink) public {
         require(_threadId < threadCounter, "Invalid thread id.");
         threadCommentLinks[_threadId].push(_commentLink);
     }
 
+    /// @return Thread[] An array of threads (id and subject)
     function getThreads () public view returns (Thread[] memory) {
         Thread[] memory result = new Thread[](threadCounter);
         for (uint64 i = 0; i < threadCounter; i++) {
@@ -37,23 +40,19 @@ contract BlockThoughts {
         return result;
     }
 
+    /// @param _threadId The thread id. Recieve these get from getThreads()
+    /// @return bytes32[] The ipfs hashes
     function getComments (uint64 _threadId) public view returns (bytes32[] memory) {
         require(_threadId < threadCounter, "Invalid thread id.");
 		return threadCommentLinks[_threadId];
     }
 
-
-
-    /// @notice Retrieves user data from an Ethereum address, or empty userdata if user does not exist
-    /// @dev This function returns the user data associated with the provided address
-    /// @param adr The Ethereum address for which data is being retrieved
+    /// @param adr The Ethereum address corresponding to the user data to retrieve
     /// @return UserData The user data (username and ipfsImageRef)
     function getUserData(address adr) public view returns(UserData memory) {
         return usersData[adr];
     }
 
-    /// @notice Create user data associating username and IPFS image reference with sender's address
-    /// @dev This function creates user data using the provided username and IPFS image reference
     /// @param username The username of the user being created
     /// @param ipfsImageRef The IPFS hash reference for the user's image
     function createUserData(string memory username, bytes32 ipfsImageRef) public {
@@ -65,7 +64,6 @@ contract BlockThoughts {
         userAddresses.push(msg.sender);
     }
 
-    /// @dev This internal function verifies if the provided username is available for use, and an address has not already created a user
     /// @param username The username to be checked for availability
     /// @return bool Returns true if the username can be used; otherwise, returns false
     function _canCreateUserData(string memory username) private view returns (bool) {
