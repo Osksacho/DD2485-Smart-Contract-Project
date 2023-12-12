@@ -12,7 +12,7 @@ class Thread {
     this.subject = subject;
     this.op = op;
     this.comments = [];
-    this.username = get_alias(op);
+    this.username = getAlias(op);
   }
 }
 
@@ -20,7 +20,7 @@ class Comment {
   constructor (text, address) {
     this.comment = text;
     this.address = address;
-    this.alias = get_alias(address);
+    this.alias = getAlias(address);
   }
 
 }
@@ -74,7 +74,7 @@ class Model {
     }
   }
 
-  get_alias(address) {
+  getAlias(address) {
     return "";
   }
   
