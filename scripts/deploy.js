@@ -13,6 +13,7 @@ async function main() {
   await blockThoughts.waitForDeployment();
 
   console.log(`BlockThoughts deployed`);
+  console.log("BlockThoughts contract deployed to:", blockThoughts.target);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
