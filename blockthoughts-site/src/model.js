@@ -233,7 +233,7 @@ class Model {
         // Just for tests
         const test = ["This is a thread"
             , "I am a cool dude"
-            , "Wow, you can have really long names in the name of the name thing nice."
+            , "Wow, you can have really long names in the name of the name thing nice. Wow, you can have really long names in the name of the name thing nice."
             , "some more thread"
             , "fuck"
             , "ok hwat is this place"]
