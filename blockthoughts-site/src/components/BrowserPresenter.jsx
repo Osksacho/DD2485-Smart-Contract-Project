@@ -1,4 +1,4 @@
-import { defineComponent } from 'vue';
+import { defineComponent, watch, computed } from 'vue';
 import SimpleThreadView from '../views/SimpleThreadView.jsx';
 import ThreadPostingView from '../views/ThreadPostingView.jsx';
 import UserProfileView from '../views/UserProfileView.jsx';
@@ -9,9 +9,22 @@ const Browser = defineComponent({
     },
 
     setup(props) {
+        props.model.getThreads();
+        props.model.getClientAddressAndUpdateUserData();
+        
+        watch(() => props.model.threads, () => {});
+        watch(() => props.model.userData, () => {});
+
+        // Compute a sorted version of threads based on their time property
+        const sortedThreads = computed(() => {
+            return props.model.threads.slice().sort((a, b) => {
+                return new Date(b.time) - new Date(a.time);
+            });
+        });
+
         return function renderACB() {
             function threadToView(thread) {
-                return <SimpleThreadView thread={thread} />
+                return <SimpleThreadView thread={thread} />;
             }
 
             return (
@@ -23,7 +36,7 @@ const Browser = defineComponent({
                     <div class="threads-container">
                         <div>
                             <ThreadPostingView model={props.model} />
-                            {props.model.threads.map(threadToView)}
+                            {sortedThreads.value.map(threadToView)}
                         </div>
                     </div>
                 </div>
@@ -31,6 +44,5 @@ const Browser = defineComponent({
         };
     },
 });
-
 
 export default Browser;

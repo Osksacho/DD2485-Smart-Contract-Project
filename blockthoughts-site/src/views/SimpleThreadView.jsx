@@ -9,8 +9,13 @@ const SimpleThreadView = defineComponent({
         return function render() {
             return (
                 <div class="thread">
-                    <a>{props.thread.subject}</a>
-                    <p>Poster: {"props.thread.username"}</p>
+                    <div class="thread-header">
+                        <span class="time">{props.thread.time}</span>
+                    </div>
+                    <div class="thread-content">
+                        <a>{props.thread.subject}</a>
+                        <p>Poster: {props.thread.username}</p>
+                    </div>
                 </div>
             );
         };

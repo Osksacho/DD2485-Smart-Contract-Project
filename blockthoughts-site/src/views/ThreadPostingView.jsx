@@ -6,29 +6,32 @@ const ThreadPostingView = defineComponent({
     },
 
     setup(props) {
-        const newThreadContent = ref("");
+        const threadSubject = ref("");
 
         const postThread = () => {
-            console.log("Posting thread:", newThreadContent.value);
-            newThreadContent.value = ""; // Reset the input
+            if (threadSubject.value.length != 0) {
+                props.model.addThread(threadSubject.value);
+                
+                threadSubject.value = "";
+            } else {
+                console.error('Subject cannot be empty');
+            }
         };
 
-        return { newThreadContent, postThread };
+        return { threadSubject, postThread };
     },
     render() {
         return (
             <div class="thread-posting">
-                <form onSubmit={this.postThread}>
-                    <div class="input-container">
-                        <input
-                            type="text"
-                            v-model={this.newThreadContent}
-                            placeholder="Enter thread subject here"
-                            class="thread-input"
-                        />
-                        <button type="submit" class="post-button">Post</button>
-                    </div>
-                </form>
+                <div class="input-container">
+                    <input
+                        type="text"
+                        v-model={this.threadSubject}
+                        placeholder="Enter thread subject here"
+                        class="thread-input"
+                    />
+                    <button type="submit" onClick={this.postThread}>Post</button>
+                </div>
             </div>
         );
     },

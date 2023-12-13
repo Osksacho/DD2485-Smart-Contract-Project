@@ -8,7 +8,7 @@ const App = defineComponent({
 
     return function render() {
       return (
-        <div class="container">          
+        <div>          
           <RouterView model={topModel} />
         </div>
       )

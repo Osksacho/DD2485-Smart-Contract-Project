@@ -15,6 +15,7 @@ contract BlockThoughts {
 	struct ThreadInfo {
 		uint64 id;
         string subject;
+        string time;
 		address poster;
 	}
 
@@ -25,13 +26,20 @@ contract BlockThoughts {
 	
     uint64 threadCounter;
 
+
+    constructor() {
+        addThread("First Thread Subject", "2023-12-01T10:30:00Z");
+        addThread("Second Thread Subject", "2023-12-02T15:45:00Z");
+    }
+
     /// @param _subject The subject of the thread.
-    function addThread(string memory _subject) public {
+    function addThread(string memory _subject, string memory _time) public {
         require(bytes(_subject).length > 0, "Thread must have a subject.");
         
         ThreadInfo memory newThreadInfo = ThreadInfo({
             id: threadCounter,
             subject: _subject,
+            time: _time,
             poster: msg.sender
         });
         

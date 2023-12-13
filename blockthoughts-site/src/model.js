@@ -1,8 +1,5 @@
 import { ethers } from 'ethers';
-
-function getAlias(address) {
-    return "";
-}
+import { ref } from 'vue';
 
 class UserData {
     constructor(username, image) {
@@ -12,30 +9,30 @@ class UserData {
 }
 
 class Thread {
-    constructor(id, subject, op) {
+    constructor(id, subject, time, username) {
         this.id = id;
         this.subject = subject;
-        this.op = op;
+        this.time = new Date(time).toLocaleString();
         this.comments = [];
-        this.username = getAlias(op);
+        this.username = username;
     }
 }
 
 class Comment {
-    constructor(text, address) {
+    constructor(text, time, address) {
         this.comment = text;
+        this.time = new Date(time).toLocaleString();
         this.address = address;
-        this.alias = getAlias(address);
     }
 
 }
 
 class Model {
     constructor() {
-        this.userData = new UserData(null, null);
-        this.threads = [];
-        this.currentThreadId = -1;
-        this.currentThreadComments = [];
+        this.userData = ref(new UserData(null, null));
+        this.threads = ref([]);
+        this.selectedThreadId = ref(-1); // -1 means no thread selected
+        this.currentThreadComments = ref([]);;
 
         if (!window.ethereum) {
             console.error("No ethereum provider available")
@@ -45,6 +42,11 @@ class Model {
         this.contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
         this.contractABI = [
             {
+              "inputs": [],
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint64",
@@ -52,9 +54,14 @@ class Model {
                   "type": "uint64"
                 },
                 {
-                  "internalType": "bytes32",
-                  "name": "_commentLink",
-                  "type": "bytes32"
+                  "internalType": "string",
+                  "name": "_value",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "_time",
+                  "type": "string"
                 }
               ],
               "name": "addComment",
@@ -67,6 +74,11 @@ class Model {
                 {
                   "internalType": "string",
                   "name": "_subject",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "_time",
                   "type": "string"
                 }
               ],
@@ -111,9 +123,14 @@ class Model {
                       "type": "address"
                     },
                     {
-                      "internalType": "bytes32",
-                      "name": "commentLink",
-                      "type": "bytes32"
+                      "internalType": "string",
+                      "name": "time",
+                      "type": "string"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "value",
+                      "type": "string"
                     }
                   ],
                   "internalType": "struct BlockThoughts.Comment[]",
@@ -138,6 +155,11 @@ class Model {
                     {
                       "internalType": "string",
                       "name": "subject",
+                      "type": "string"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "time",
                       "type": "string"
                     },
                     {
@@ -188,16 +210,65 @@ class Model {
             {
               "inputs": [
                 {
+                  "internalType": "uint64",
+                  "name": "",
+                  "type": "uint64"
+                },
+                {
                   "internalType": "uint256",
                   "name": "",
                   "type": "uint256"
                 }
               ],
-              "name": "userAddresses",
+              "name": "threadComments",
               "outputs": [
                 {
                   "internalType": "address",
+                  "name": "poster",
+                  "type": "address"
+                },
+                {
+                  "internalType": "string",
+                  "name": "time",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "value",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint64",
                   "name": "",
+                  "type": "uint64"
+                }
+              ],
+              "name": "threads",
+              "outputs": [
+                {
+                  "internalType": "uint64",
+                  "name": "id",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "string",
+                  "name": "subject",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "time",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "poster",
                   "type": "address"
                 }
               ],
@@ -229,24 +300,11 @@ class Model {
               "type": "function"
             }
           ]
-        
-        // Just for tests
-        const test = ["This is a thread"
-            , "I am a cool dude"
-            , "Wow, you can have really long names in the name of the name thing nice. Wow, you can have really long names in the name of the name thing nice."
-            , "some more thread"
-            , "fuck"
-            , "ok hwat is this place"]
 
-        function strToThread(str) {
-            return new Thread(1, str);
-        }
-
-        this.threads = test.map(strToThread);
         
     }
 
-    async getUserAddressAndData() {
+    async getClientAddressAndUpdateUserData() {
         try {
             const accounts = await window.ethereum.request({
                 method: 'eth_requestAccounts',
@@ -254,16 +312,26 @@ class Model {
 
             if (accounts.length > 0) {
                 const userAddress = accounts[0];
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
-                const userData = await contract.getUserData(userAddress);
+                const userData = await this.getUserData(userAddress);
                 this.userData.username = userData.username;
-                console.log('User Data:', this.userData);
             } else {
                 console.error('No accounts found.');
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
+        }
+    }
+
+    async getUserData(userAddress){
+        try {
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
+                const userData = await contract.getUserData(userAddress);
+                console.log('User Data:', userData);
+                return userData;
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+            return new UserData("", "");
         }
     }
 
@@ -289,49 +357,46 @@ class Model {
         this.userData.username = username;
     }
 
-    /*async getThreads() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await provider.send("eth_requestAccounts", []); // Request access to MetaMask
-      const signer = provider.getSigner();
-     // Placeholder
-  
-      const contract = new ethers.Contract(this.contractAddress, this.contractABI, signer);
-  
-      try {
-        const threadsData = await contract.getThreads();
-        this.threads = threadsData.map(thread => new Thread(thread.id, thread.subject, thread.poster));
-      } catch (error) {
-        console.error("Error fetching threads:", error);
-      }
-    }
-    */
-
-    getAlias(address) {
-        return "";
+    async convertThread(threadFromContract){
+        try {
+            const userdata = await this.getUserData(threadFromContract.poster);
+            return new Thread(threadFromContract.id, threadFromContract.subject, threadFromContract.time, userdata.username);
+        } catch (error) {
+            console.error('Error converting thread:', error);
+            return null;
+        }
     }
 
-    getThreads() {
-        return [];
+    async getThreads() {
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
+            const threads = await contract.getThreads();
+            
+            const threadPromises = threads.map(thread => this.convertThread(thread));
+            this.threads = await Promise.all(threadPromises);
+            console.log('Thread Data:', this.threads);
+        } catch (error) {
+            console.error('Error fetching thread data:', error);
+        }
     }
 
-    getComment(ipfsHash, address) {
+    async addThread(subject){
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
-        // GET Text from ipfs
-        const text = "";
-
-
-
-        return new Comment();
+            const time = new Date().toISOString();
+            const signer = provider.getSigner();
+            const tx = await contract.connect(signer).addThread(subject, time);
+            await tx.wait();
+            await this.getThreads();
+            console.log('Transaction hash:', tx.hash);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
-    getComments(threadId) {
-        // GET array of comments from contract
-        const contractComments = [];
-
-        const comments = contractComments.map(this.getComment);
-
-
-    }
 }
 
 export default Model;
