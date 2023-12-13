@@ -12,7 +12,7 @@ const UserProfileView = defineComponent({
 
         const handleSubmit = () => {
             if (newUsername.value.length != 0) {
-                props.model.submitUserData(newUsername.value);
+                props.model.createUserData(newUsername.value);
             } else {
                 console.error('Username cannot be empty');
             }

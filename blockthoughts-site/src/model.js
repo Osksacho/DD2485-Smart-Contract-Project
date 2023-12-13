@@ -34,278 +34,277 @@ class Model {
         this.selectedThreadId = ref(-1); // -1 means no thread selected
         this.currentThreadComments = ref([]);;
 
-        if (!window.ethereum) {
-            console.error("No ethereum provider available")
-        }
-
-
         this.contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
         this.contractABI = [
             {
-              "inputs": [],
-              "stateMutability": "nonpayable",
-              "type": "constructor"
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "uint64",
-                  "name": "_threadId",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "string",
-                  "name": "_value",
-                  "type": "string"
-                },
-                {
-                  "internalType": "string",
-                  "name": "_time",
-                  "type": "string"
-                }
-              ],
-              "name": "addComment",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "string",
-                  "name": "_subject",
-                  "type": "string"
-                },
-                {
-                  "internalType": "string",
-                  "name": "_time",
-                  "type": "string"
-                }
-              ],
-              "name": "addThread",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "string",
-                  "name": "username",
-                  "type": "string"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "ipfsImageRef",
-                  "type": "bytes32"
-                }
-              ],
-              "name": "createUserData",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint64",
-                  "name": "_threadId",
-                  "type": "uint64"
-                }
-              ],
-              "name": "getComments",
-              "outputs": [
-                {
-                  "components": [
+                "inputs": [
                     {
-                      "internalType": "address",
-                      "name": "poster",
-                      "type": "address"
+                        "internalType": "uint64",
+                        "name": "_threadId",
+                        "type": "uint64"
                     },
                     {
-                      "internalType": "string",
-                      "name": "time",
-                      "type": "string"
+                        "internalType": "string",
+                        "name": "_value",
+                        "type": "string"
                     },
                     {
-                      "internalType": "string",
-                      "name": "value",
-                      "type": "string"
+                        "internalType": "string",
+                        "name": "_time",
+                        "type": "string"
                     }
-                  ],
-                  "internalType": "struct BlockThoughts.Comment[]",
-                  "name": "",
-                  "type": "tuple[]"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
+                ],
+                "name": "addComment",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
             },
             {
-              "inputs": [],
-              "name": "getThreads",
-              "outputs": [
-                {
-                  "components": [
+                "inputs": [
                     {
-                      "internalType": "uint64",
-                      "name": "id",
-                      "type": "uint64"
+                        "internalType": "string",
+                        "name": "_subject",
+                        "type": "string"
                     },
                     {
-                      "internalType": "string",
-                      "name": "subject",
-                      "type": "string"
-                    },
-                    {
-                      "internalType": "string",
-                      "name": "time",
-                      "type": "string"
-                    },
-                    {
-                      "internalType": "address",
-                      "name": "poster",
-                      "type": "address"
+                        "internalType": "string",
+                        "name": "_time",
+                        "type": "string"
                     }
-                  ],
-                  "internalType": "struct BlockThoughts.ThreadInfo[]",
-                  "name": "",
-                  "type": "tuple[]"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
+                ],
+                "name": "addThread",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "adr",
-                  "type": "address"
-                }
-              ],
-              "name": "getUserData",
-              "outputs": [
-                {
-                  "components": [
+                "inputs": [
                     {
-                      "internalType": "string",
-                      "name": "username",
-                      "type": "string"
+                        "internalType": "string",
+                        "name": "username",
+                        "type": "string"
                     },
                     {
-                      "internalType": "bytes32",
-                      "name": "ipfsImageRef",
-                      "type": "bytes32"
+                        "internalType": "bytes32",
+                        "name": "ipfsImageRef",
+                        "type": "bytes32"
                     }
-                  ],
-                  "internalType": "struct BlockThoughts.UserData",
-                  "name": "",
-                  "type": "tuple"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
+                ],
+                "name": "createUserData",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "uint64",
-                  "name": "",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "name": "threadComments",
-              "outputs": [
-                {
-                  "internalType": "address",
-                  "name": "poster",
-                  "type": "address"
-                },
-                {
-                  "internalType": "string",
-                  "name": "time",
-                  "type": "string"
-                },
-                {
-                  "internalType": "string",
-                  "name": "value",
-                  "type": "string"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "_threadId",
+                        "type": "uint64"
+                    }
+                ],
+                "name": "getComments",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "poster",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "time",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "value",
+                                "type": "string"
+                            }
+                        ],
+                        "internalType": "struct BlockThoughts.Comment[]",
+                        "name": "",
+                        "type": "tuple[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "uint64",
-                  "name": "",
-                  "type": "uint64"
-                }
-              ],
-              "name": "threads",
-              "outputs": [
-                {
-                  "internalType": "uint64",
-                  "name": "id",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "string",
-                  "name": "subject",
-                  "type": "string"
-                },
-                {
-                  "internalType": "string",
-                  "name": "time",
-                  "type": "string"
-                },
-                {
-                  "internalType": "address",
-                  "name": "poster",
-                  "type": "address"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
+                "inputs": [],
+                "name": "getThreads",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "uint64",
+                                "name": "id",
+                                "type": "uint64"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "subject",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "time",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "address",
+                                "name": "poster",
+                                "type": "address"
+                            }
+                        ],
+                        "internalType": "struct BlockThoughts.ThreadInfo[]",
+                        "name": "",
+                        "type": "tuple[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                }
-              ],
-              "name": "usersData",
-              "outputs": [
-                {
-                  "internalType": "string",
-                  "name": "username",
-                  "type": "string"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "ipfsImageRef",
-                  "type": "bytes32"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "adr",
+                        "type": "address"
+                    }
+                ],
+                "name": "getUserData",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "string",
+                                "name": "username",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "bytes32",
+                                "name": "ipfsImageRef",
+                                "type": "bytes32"
+                            }
+                        ],
+                        "internalType": "struct BlockThoughts.UserData",
+                        "name": "",
+                        "type": "tuple"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "threadComments",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "poster",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "time",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "value",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "",
+                        "type": "uint64"
+                    }
+                ],
+                "name": "threads",
+                "outputs": [
+                    {
+                        "internalType": "uint64",
+                        "name": "id",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "subject",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "time",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "poster",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "usersData",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "username",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bytes32",
+                        "name": "ipfsImageRef",
+                        "type": "bytes32"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
             }
-          ]
+        ]
 
-        
+
     }
 
     async getClientAddressAndUpdateUserData() {
         try {
+            if (!window.ethereum) {
+                throw "No ethereum provider available";
+            }
+
             const accounts = await window.ethereum.request({
                 method: 'eth_requestAccounts',
             });
@@ -322,13 +321,17 @@ class Model {
         }
     }
 
-    async getUserData(userAddress){
+    async getUserData(userAddress) {
         try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
-                const userData = await contract.getUserData(userAddress);
-                console.log('User Data:', userData);
-                return userData;
+            if (!window.ethereum) {
+                throw "No ethereum provider available";
+            }
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
+            const userData = await contract.getUserData(userAddress);
+            console.log('User Data:', userData);
+            return userData;
         } catch (error) {
             console.error('Error fetching user data:', error);
             return new UserData("", "");
@@ -339,6 +342,10 @@ class Model {
         const ipfsImageRef = ethers.utils.formatBytes32String('ipfsHash')
 
         try {
+            if (!window.ethereum) {
+                throw "No ethereum provider available";
+            }
+
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
@@ -346,18 +353,14 @@ class Model {
             const tx = await contract.connect(signer).createUserData(username, ipfsImageRef);
             await tx.wait();
 
+            this.userData.username = username;
             console.log('Transaction hash:', tx.hash);
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
-    submitUserData(username, image) {
-        this.createUserData(username)
-        this.userData.username = username;
-    }
-
-    async convertThread(threadFromContract){
+    async convertThread(threadFromContract) {
         try {
             const userdata = await this.getUserData(threadFromContract.poster);
             return new Thread(threadFromContract.id, threadFromContract.subject, threadFromContract.time, userdata.username);
@@ -369,10 +372,14 @@ class Model {
 
     async getThreads() {
         try {
+            if (!window.ethereum) {
+                throw "No ethereum provider available";
+            }
+
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
             const threads = await contract.getThreads();
-            
+
             const threadPromises = threads.map(thread => this.convertThread(thread));
             this.threads = await Promise.all(threadPromises);
             console.log('Thread Data:', this.threads);
@@ -381,8 +388,12 @@ class Model {
         }
     }
 
-    async addThread(subject){
+    async addThread(subject) {
         try {
+            if (!window.ethereum) {
+                throw "No ethereum provider available";
+            }
+
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
