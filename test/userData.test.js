@@ -39,7 +39,7 @@ describe('BlockThoughs Contract Userdata tests', function () {
       );
   });
 
-  it('Should not allow creation of duplicate user data', async function () {
+  it('Should not allow creation of duplicate username', async function () {
     const username = 'oskar felixsson';
     const ipfsImageRef = ethers.encodeBytes32String('ipfsHash');
 
@@ -49,20 +49,7 @@ describe('BlockThoughs Contract Userdata tests', function () {
     const duplicateIpfsImageRef = ethers.encodeBytes32String('ipfsHash2');
 
     await expect(blockThoughts.connect(addr1).createUserData(duplicateUsername, duplicateIpfsImageRef)).to.be.revertedWith(
-      'Username or address already exists'
-    );
-  });
-
-  it('Should not allow user creation multiple times', async function () {
-    const username = 'oskar felixsson';
-    const ipfsImageRef = ethers.encodeBytes32String('ipfsHash');
-
-    await blockThoughts.createUserData(username, ipfsImageRef);
-
-    const username2 = 'oskar felixsson2';
-
-    await expect(blockThoughts.createUserData(username2, ipfsImageRef)).to.be.revertedWith(
-      'Username or address already exists'
+      'Username already exists'
     );
   });
   
@@ -78,25 +65,26 @@ describe('BlockThoughs Contract Userdata tests', function () {
   });
   
   it('Should be possible to add and retrieve comments', async function () {
-	const ipfsCommentLink = ethers.encodeBytes32String('ipfsHash');
+	const value = "This is a comment";
+    const time = new Date().toISOString();
 
     await blockThoughts.addThread("My thoughts on tests");
 	await blockThoughts.addThread("Everything about cars");
 	
-	await blockThoughts.addComment(1, ipfsCommentLink);
+	await blockThoughts.addComment(1, value, time);
 	
-    await expect((await blockThoughts.getComments(1))[0].commentLink).to.equal(ipfsCommentLink);
+    await expect((await blockThoughts.getComments(1))[0].value).to.equal(value);
 
   });
   
   it('Cannot get comments with invalid thread ids', async function () {
-	const ipfsCommentLink = ethers.encodeBytes32String('ipfsHash');
+	const value = "This is a comment";
+    const time = new Date().toISOString();
 
     await blockThoughts.addThread("My thoughts on tests");
 	await blockThoughts.addThread("Everything about cars");
 	
-	await blockThoughts.addComment(1, ipfsCommentLink);
-	
+	await blockThoughts.addComment(1, value, time);
 
 	await expect(blockThoughts.getComments(2)).to.be.revertedWith(
 		'Invalid thread id.'
@@ -104,12 +92,13 @@ describe('BlockThoughs Contract Userdata tests', function () {
   });
   
   it('Cannot add comments with invalid thread ids', async function () {
-	const ipfsCommentLink = ethers.encodeBytes32String('ipfsHash');
+	const value = "This is a comment";
+    const time = new Date().toISOString();
 
     await blockThoughts.addThread("My thoughts on tests");
 	await blockThoughts.addThread("Everything about cars");
 	
-	await expect(blockThoughts.addComment(2, ipfsCommentLink)).to.be.revertedWith(
+	await expect(blockThoughts.addComment(2, value, time)).to.be.revertedWith(
 		'Invalid thread id.'
 	);
   });
