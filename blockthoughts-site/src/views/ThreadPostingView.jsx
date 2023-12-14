@@ -22,13 +22,13 @@ const ThreadPostingView = defineComponent({
     },
     render() {
         return (
-            <div class="thread-posting">
+            <div>
                 <div class="input-container">
                     <input
                         type="text"
                         v-model={this.threadSubject}
                         placeholder="Enter thread subject here"
-                        class="thread-input"
+                        class="input"
                     />
                     <button type="submit" onClick={this.postThread}>Post</button>
                 </div>

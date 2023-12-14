@@ -1,6 +1,7 @@
-import { defineComponent, watch, computed } from 'vue';
+import { defineComponent, watch, computed, ref } from 'vue';
 import SimpleThreadView from '../views/SimpleThreadView.jsx';
 import ThreadPostingView from '../views/ThreadPostingView.jsx';
+import ThreadView from '../views/ThreadView.jsx';
 import UserProfileView from '../views/UserProfileView.jsx';
 
 const Browser = defineComponent({
@@ -11,9 +12,8 @@ const Browser = defineComponent({
     setup(props) {
         props.model.getThreads();
         props.model.getClientAddressAndUpdateUserData();
+        const selectedThreadId = ref(props.model.selectedThreadId);
         
-        watch(() => props.model.threads, () => {});
-        watch(() => props.model.userData, () => {});
 
         // Compute a sorted version of threads based on their time property
         const sortedThreads = computed(() => {
@@ -24,7 +24,13 @@ const Browser = defineComponent({
 
         return function renderACB() {
             function threadToView(thread) {
-                return <SimpleThreadView thread={thread} />;
+                return (
+                    <SimpleThreadView
+                        thread={thread}
+                        onClick={() => { selectedThreadId.value = thread.id
+                                         props.model.selectedThreadId = thread.id;}}
+                    />
+                );
             }
 
             return (
@@ -33,12 +39,21 @@ const Browser = defineComponent({
                         <UserProfileView model={props.model} />
                     </div>
 
-                    <div class="threads-container">
-                        <div>
-                            <ThreadPostingView model={props.model} />
-                            {sortedThreads.value.map(threadToView)}
+                    {selectedThreadId.value > -1 ? (
+                        <ThreadView model={props.model} 
+                                    thread={props.model.threads.find(thread => thread.id === selectedThreadId.value)}
+                                    return={() => { selectedThreadId.value = -1
+                                                    props.model.selectedThreadId = -1;
+                                                    props.model.currentThreadComments = ref([]);}}
+                        />
+                    ) : (
+                        <div class="threads-container">
+                            <div>
+                                <ThreadPostingView model={props.model} />
+                                {sortedThreads.value.map(threadToView)}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             );
         };

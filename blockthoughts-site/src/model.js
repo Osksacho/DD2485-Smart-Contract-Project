@@ -10,19 +10,19 @@ class UserData {
 
 class Thread {
     constructor(id, subject, time, username) {
-        this.id = id;
+        this.id = parseInt(id);
         this.subject = subject;
         this.time = new Date(time).toLocaleString();
         this.comments = [];
-        this.username = username;
+        this.username = !username ? "Unknown" : username;
     }
 }
 
 class Comment {
-    constructor(text, time, address) {
-        this.comment = text;
+    constructor(text, time, username) {
+        this.text = text;
         this.time = new Date(time).toLocaleString();
-        this.address = address;
+        this.username = !username ? "Unknown" : username;
     }
 
 }
@@ -32,7 +32,8 @@ class Model {
         this.userData = ref(new UserData(null, null));
         this.threads = ref([]);
         this.selectedThreadId = ref(-1); // -1 means no thread selected
-        this.currentThreadComments = ref([]);;
+        this.currentThreadComments = ref([]);
+
 
         this.contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
         this.contractABI = [
@@ -408,6 +409,53 @@ class Model {
         }
     }
 
+    async convertComment(commentFromContract) {
+        try {
+            const userdata = await this.getUserData(commentFromContract.poster);
+            return new Comment(commentFromContract.value, commentFromContract.time, userdata.username);
+        } catch (error) {
+            console.error('Error converting comment:', error);
+            return null;
+        }
+    }
+
+    async getComments() {
+        try {
+            if (!window.ethereum) {
+                throw "No ethereum provider available";
+            }
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
+            const comments = await contract.getComments(this.selectedThreadId);
+
+            const commentsPromises = comments.map(comment => this.convertComment(comment));
+            this.currentThreadComments = await Promise.all(commentsPromises);
+            console.log('Comment Data:', this.currentThreadComments);
+        } catch (error) {
+            console.error('Error fetching thread data:', error);
+        }
+    }
+
+    async addComment(comment) {
+        try {
+            if (!window.ethereum) {
+                throw "No ethereum provider available";
+            }
+
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
+
+            const time = new Date().toISOString();
+            const signer = provider.getSigner();
+            const tx = await contract.connect(signer).addComment(this.selectedThreadId, comment, time);
+            await tx.wait();
+            await this.getComments();
+            console.log('Transaction hash:', tx.hash);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 }
 
 export default Model;

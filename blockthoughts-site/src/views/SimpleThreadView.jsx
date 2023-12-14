@@ -4,8 +4,11 @@ const SimpleThreadView = defineComponent({
     props: {
         thread: Object,
     },
+    
 
     setup(props) {
+
+
         return function render() {
             return (
                 <div class="thread">
