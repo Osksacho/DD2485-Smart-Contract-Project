@@ -30,7 +30,7 @@ The protocol proposal must be done through a pull-request before Nov 15, sunset 
 
 
 
-## How to test
+## Deploy locally
 
 Start by cloning the repository and install all dependencies 
 
@@ -51,7 +51,15 @@ npx hardhat compile
 npx hardhat run scripts/deploy.js --network [network-name]
 ```
 
-## Run the website interface
+## Tests and code coverage
+
+You can run the tests and get a coverage report of 100% by using
+
+```
+npx hardhat coverage
+```
+
+## Host website locally
 There are a few extra steps here. First, to host the site locally you can go inte blockthoughts-site folder and
 ```
 npm run dev
