@@ -12,7 +12,8 @@
     "ethers": "^5.7.2",
     "vue": "^3.3.8",
     "vue-router": "^4.1.6",
-    "web3": "^4.3.0"
+    "web3": "^4.3.0",
+    "ipfs-http-client": "^60.0.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.0",
