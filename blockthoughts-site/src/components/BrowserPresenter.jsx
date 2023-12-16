@@ -1,6 +1,6 @@
 import { defineComponent, watch, computed, ref } from 'vue';
 import SimpleThreadView from '../views/SimpleThreadView.jsx';
-import ThreadPostingView from '../views/ThreadPostingView.jsx';
+import ThreadPoster from '../components/PosterPresenter.jsx';
 import ThreadView from '../views/ThreadView.jsx';
 import UserProfileView from '../views/UserProfileView.jsx';
 
@@ -49,7 +49,7 @@ const Browser = defineComponent({
                     ) : (
                         <div class="threads-container">
                             <div>
-                                <ThreadPostingView model={props.model} />
+                                <ThreadPoster model={props.model} />
                                 {sortedThreads.value.map(threadToView)}
                             </div>
                         </div>

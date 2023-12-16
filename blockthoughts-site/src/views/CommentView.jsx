@@ -6,6 +6,14 @@ const CommentView = defineComponent({
     },
 
     setup(props) {
+        function getImage() {
+            const imgLink = "https://ipfs.io/ipfs/" + props.comment.ipfsImageCid;
+            if (props.comment.ipfsImageCid != "")
+                return <img src={imgLink} class="smallimg"></img>
+            else
+                return null;
+        }
+
         return function render() {
             return (
                 <div class="comment">
@@ -13,6 +21,7 @@ const CommentView = defineComponent({
                         <span class="time">{props.comment.time}</span>
                     </div>
                     <div class="comment-content">
+                        {getImage()} 
                         <a>{props.comment.text}</a>
                         <p>{props.comment.username}</p>
                         {/* Display other details of the comment */}

@@ -116,10 +116,24 @@ button:focus-visible {
     margin-right: auto;
 }
 
+.thread-posting {
+    background: #283238;
+    border-radius: 10px;
+    margin: 20px;
+}
 
+.thread-input {
+   width: 55%;
+    padding: 12px;
+    margin-right: 6px;
+    margin-left: 6px;
+    font-size: 16px;
+    box-sizing: border-box; 
+}
 
 p {
     margin-top: 8px;
+    color:#000000;
     /* Adjust spacing between subject and username */
     font-style: italic;
     /* Example styling for the username */
@@ -178,6 +192,11 @@ p {
 
 .comment-content p {
     margin: 5px 0;
+}
+
+.smallimg {
+    max-height: 400px;
+    max-width: 400px;
 }
 
 /* Add this CSS to your styles file or component */

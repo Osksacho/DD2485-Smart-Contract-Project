@@ -10,14 +10,14 @@ contract BlockThoughts {
     
 	struct Comment {
 		address poster;
-        string time;
+        uint time;
         string value;
 	}
 	
 	struct ThreadInfo {
 		uint64 id;
         string subject;
-        string time;
+        uint time;
 		address poster;
 	}
 
@@ -28,16 +28,16 @@ contract BlockThoughts {
 	
     uint64 threadCounter;
 
+
     /// @notice Add a thread. The poster will be the sender address.
     /// @param subject The subject of the thread.
-    /// @param time The posting time of the thread (iso string format)
-    function addThread(string memory subject, string memory time) public {
+    function addThread(string memory subject) public {
         require(bytes(subject).length > 0, "Thread must have a subject.");
         
         ThreadInfo memory newThreadInfo = ThreadInfo({
             id: threadCounter,
             subject: subject,
-            time: time,
+            time: block.timestamp,
             poster: msg.sender
         });
         
@@ -45,7 +45,7 @@ contract BlockThoughts {
         threads[threadCounter] = newThreadInfo;
         threadCounter++;
     }
-    
+
     /// @notice Get all threads.
     /// @return Array of ThreadInfo (id, subject, time, poster)
     function getThreads() public view returns (ThreadInfo[] memory) {
@@ -61,13 +61,12 @@ contract BlockThoughts {
     /// @notice Add a comment. The poster will be the sender address.
     /// @param threadId The id of the thread.
     /// @param value content of the comment.
-    /// @param time The time of the comment (iso string format)
-    function addComment(uint64 threadId, string memory value, string memory time) public {
+    function addComment(uint64 threadId, string memory value) public {
         require(threadId < threadCounter, "Invalid thread id.");
         
         Comment memory newComment = Comment({
             poster: msg.sender,
-            time: time,
+            time: block.timestamp,
             value: value
         });
         

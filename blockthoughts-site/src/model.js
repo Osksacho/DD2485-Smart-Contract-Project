@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { ref } from 'vue';
+import { create } from 'ipfs-http-client';
 
 class UserData {
     constructor(username, image) {
@@ -19,21 +20,29 @@ class Thread {
 }
 
 class Comment {
-    constructor(text, time, username) {
+    constructor(text, time, username, ipfsImageCid = "") {
         this.text = text;
         this.time = new Date(time).toLocaleString();
         this.username = !username ? "Unknown" : username;
+        this.ipfsImageCid = ipfsImageCid;
     }
 
 }
 
 class Model {
     constructor() {
+        // IPFS 
+        try {
+            this.ipfs = create({ host: 'localhost', port: '5001', protocol: 'http' });
+        } catch (error) {
+            console.error('Failed to connect to IPFS:', error);
+            this.ipfs = null;
+        }
+
         this.userData = ref(new UserData(null, null));
         this.threads = ref([]);
         this.selectedThreadId = ref(-1); // -1 means no thread selected
         this.currentThreadComments = ref([]);
-
 
         this.contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
         this.contractABI = [
@@ -389,7 +398,18 @@ class Model {
         }
     }
 
-    async addThread(subject) {
+    async addThread(subject, file) {
+        if (file != null) {
+            try {
+                const added = await this.ipfs.add(file);
+                const cid = added.cid.toString();
+                console.log("ADDED CID: ", cid);
+            } catch (error) {
+                console.log("Error: ", error);
+            }
+
+        }
+
         try {
             if (!window.ethereum) {
                 throw "No ethereum provider available";
@@ -398,9 +418,8 @@ class Model {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
-            const time = new Date().toISOString();
             const signer = provider.getSigner();
-            const tx = await contract.connect(signer).addThread(subject, time);
+            const tx = await contract.connect(signer).addThread(subject);
             await tx.wait();
             await this.getThreads();
             console.log('Transaction hash:', tx.hash);
@@ -446,9 +465,8 @@ class Model {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
-            const time = new Date().toISOString();
             const signer = provider.getSigner();
-            const tx = await contract.connect(signer).addComment(this.selectedThreadId, comment, time);
+            const tx = await contract.connect(signer).addComment(this.selectedThreadId, comment);
             await tx.wait();
             await this.getComments();
             console.log('Transaction hash:', tx.hash);
