@@ -68,7 +68,7 @@ There are a few extra steps here. First, to host the site locally you can go int
 npm run dev
 ```
 
-To correctly interact with the local blockchain you will need to have metamask installed in your browser and add your localhost as the blockchain network
+To interact with the local blockchain you will need to have metamask installed in your browser and add your localhost as the blockchain network
 
 ![image](https://github.com/Osksacho/DD2485-Smart-Contract-Project/assets/65446534/6f42c7d4-cd02-49aa-addb-1506ba5dde97)
 
