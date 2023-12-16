@@ -54,9 +54,9 @@ describe('BlockThoughs Contract Userdata tests', function () {
   });
   
   it('Should be possible to add and retrieve threads', async function () {
-  
-    await blockThoughts.addThread("My thoughts on tests");
-	await blockThoughts.addThread("Everything about cars");
+	const nullBytes32 = "0x" + "0".repeat(64);
+    await blockThoughts.addThread("My thoughts on tests", nullBytes32);
+	await blockThoughts.addThread("Everything about cars", nullBytes32);
 	
 	[id, sub] = (await blockThoughts.getThreads())[0];
 	
@@ -66,11 +66,13 @@ describe('BlockThoughs Contract Userdata tests', function () {
   
   it('Should be possible to add and retrieve comments', async function () {
 	const value = "This is a comment";
-
-    await blockThoughts.addThread("My thoughts on tests");
-	await blockThoughts.addThread("Everything about cars");
+	const ipfsImageRef = ethers.encodeBytes32String('ipfsHash');
+	const nullBytes32 = "0x" + "0".repeat(64);
+    
+	await blockThoughts.addThread("My thoughts on tests", ipfsImageRef);
+	await blockThoughts.addThread("Everything about cars", ipfsImageRef);
 	
-	await blockThoughts.addComment(1, value);
+	await blockThoughts.addComment(1, value, nullBytes32);
 	
     await expect((await blockThoughts.getComments(1))[0].value).to.equal(value);
 
@@ -78,11 +80,11 @@ describe('BlockThoughs Contract Userdata tests', function () {
   
   it('Cannot get comments with invalid thread ids', async function () {
 	const value = "This is a comment";
-
-    await blockThoughts.addThread("My thoughts on tests");
-	await blockThoughts.addThread("Everything about cars");
+	const nullBytes32 = "0x" + "0".repeat(64); 
+    await blockThoughts.addThread("My thoughts on tests", nullBytes32);
+	await blockThoughts.addThread("Everything about cars", nullBytes32);
 	
-	await blockThoughts.addComment(1, value);
+	await blockThoughts.addComment(1, value, nullBytes32);
 
 	await expect(blockThoughts.getComments(2)).to.be.revertedWith(
 		'Invalid thread id.'
@@ -91,17 +93,18 @@ describe('BlockThoughs Contract Userdata tests', function () {
   
   it('Cannot add comments with invalid thread ids', async function () {
 	const value = "This is a comment";
-
-    await blockThoughts.addThread("My thoughts on tests");
-	await blockThoughts.addThread("Everything about cars");
+	const nullBytes32 = "0x" + "0".repeat(64); 
+    await blockThoughts.addThread("My thoughts on tests", nullBytes32);
+	await blockThoughts.addThread("Everything about cars", nullBytes32);
 	
-	await expect(blockThoughts.addComment(2, value)).to.be.revertedWith(
+	await expect(blockThoughts.addComment(2, value, nullBytes32)).to.be.revertedWith(
 		'Invalid thread id.'
 	);
   });
   
   it('Should not be possible to add threads with no subject line', async function () {
-	await expect(blockThoughts.addThread("")).to.be.revertedWith(
+	  const nullBytes32 = "0x" + "0".repeat(64); 
+	await expect(blockThoughts.addThread("", nullBytes32)).to.be.revertedWith(
 		'Thread must have a subject.'
 	);
   });

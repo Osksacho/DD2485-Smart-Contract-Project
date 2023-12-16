@@ -12,12 +12,14 @@ contract BlockThoughts {
 		address poster;
         uint time;
         string value;
+		bytes32 ipfsImageRef;
 	}
 	
 	struct ThreadInfo {
 		uint64 id;
         string subject;
         uint time;
+		bytes32 ipfsImageRef;
 		address poster;
 	}
 
@@ -31,14 +33,15 @@ contract BlockThoughts {
 
     /// @notice Add a thread. The poster will be the sender address.
     /// @param subject The subject of the thread.
-    function addThread(string memory subject) public {
+    function addThread(string memory subject, bytes32 cid) public {
         require(bytes(subject).length > 0, "Thread must have a subject.");
         
         ThreadInfo memory newThreadInfo = ThreadInfo({
             id: threadCounter,
             subject: subject,
             time: block.timestamp,
-            poster: msg.sender
+            poster: msg.sender,
+			ipfsImageRef: cid
         });
         
         // The comments array is automatically initialized as an empty array in storage
@@ -47,7 +50,7 @@ contract BlockThoughts {
     }
 
     /// @notice Get all threads.
-    /// @return Array of ThreadInfo (id, subject, time, poster)
+    /// @return Array of ThreadInfo (id, subject, poster)
     function getThreads() public view returns (ThreadInfo[] memory) {
 		ThreadInfo[] memory infos = new ThreadInfo[](threadCounter);
 
@@ -61,13 +64,14 @@ contract BlockThoughts {
     /// @notice Add a comment. The poster will be the sender address.
     /// @param threadId The id of the thread.
     /// @param value content of the comment.
-    function addComment(uint64 threadId, string memory value) public {
+    function addComment(uint64 threadId, string memory value, bytes32 cid) public {
         require(threadId < threadCounter, "Invalid thread id.");
         
         Comment memory newComment = Comment({
             poster: msg.sender,
             time: block.timestamp,
-            value: value
+            value: value,
+			ipfsImageRef: cid
         });
         
         threadComments[threadId].push(newComment);

@@ -7,7 +7,13 @@ const SimpleThreadView = defineComponent({
     
 
     setup(props) {
-
+        function getImage() {
+            const imgLink = "https://ipfs.io/ipfs/" + props.comment.ipfsImageCid;
+            if (props.comment.ipfsImageCid != "")
+                return <img src={imgLink} class="smallimg"></img>
+            else
+                return null;
+        }
 
         return function render() {
             return (

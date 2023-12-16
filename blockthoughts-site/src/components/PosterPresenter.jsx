@@ -14,6 +14,8 @@ const ThreadPoster = defineComponent({
         function onPost() {
             console.log("in here!");
             if (subject.value.length !== '') {
+                
+                console.log(file.value);
                 props.model.addThread(subject.value, file.value);
 
                 // Reset subject and file after posting
