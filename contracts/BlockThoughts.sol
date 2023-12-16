@@ -8,14 +8,14 @@ contract BlockThoughts {
     
 	struct Comment {
 		address poster;
-        string time;
+        uint time;
         string value;
 	}
 	
 	struct ThreadInfo {
 		uint64 id;
         string subject;
-        string time;
+        uint time;
 		address poster;
 	}
 

@@ -54,9 +54,9 @@ describe('BlockThoughs Contract Userdata tests', function () {
   });
   
   it('Should be possible to add and retrieve threads', async function () {
-    const time = new Date().toISOString();
-    await blockThoughts.addThread("My thoughts on tests", time);
-	await blockThoughts.addThread("Everything about cars", time);
+  
+    await blockThoughts.addThread("My thoughts on tests");
+	await blockThoughts.addThread("Everything about cars");
 	
 	[id, sub] = (await blockThoughts.getThreads())[0];
 	
@@ -66,12 +66,11 @@ describe('BlockThoughs Contract Userdata tests', function () {
   
   it('Should be possible to add and retrieve comments', async function () {
 	const value = "This is a comment";
-    const time = new Date().toISOString();
 
-    await blockThoughts.addThread("My thoughts on tests", time);
-	await blockThoughts.addThread("Everything about cars", time);
+    await blockThoughts.addThread("My thoughts on tests");
+	await blockThoughts.addThread("Everything about cars");
 	
-	await blockThoughts.addComment(1, value, time);
+	await blockThoughts.addComment(1, value);
 	
     await expect((await blockThoughts.getComments(1))[0].value).to.equal(value);
 
@@ -79,12 +78,11 @@ describe('BlockThoughs Contract Userdata tests', function () {
   
   it('Cannot get comments with invalid thread ids', async function () {
 	const value = "This is a comment";
-    const time = new Date().toISOString();
 
-    await blockThoughts.addThread("My thoughts on tests", time);
-	await blockThoughts.addThread("Everything about cars", time);
+    await blockThoughts.addThread("My thoughts on tests");
+	await blockThoughts.addThread("Everything about cars");
 	
-	await blockThoughts.addComment(1, value, time);
+	await blockThoughts.addComment(1, value);
 
 	await expect(blockThoughts.getComments(2)).to.be.revertedWith(
 		'Invalid thread id.'
@@ -93,19 +91,17 @@ describe('BlockThoughs Contract Userdata tests', function () {
   
   it('Cannot add comments with invalid thread ids', async function () {
 	const value = "This is a comment";
-    const time = new Date().toISOString();
 
-    await blockThoughts.addThread("My thoughts on tests", time);
-	await blockThoughts.addThread("Everything about cars", time);
+    await blockThoughts.addThread("My thoughts on tests");
+	await blockThoughts.addThread("Everything about cars");
 	
-	await expect(blockThoughts.addComment(2, value, time)).to.be.revertedWith(
+	await expect(blockThoughts.addComment(2, value)).to.be.revertedWith(
 		'Invalid thread id.'
 	);
   });
   
   it('Should not be possible to add threads with no subject line', async function () {
-    const time = new Date().toISOString();
-	await expect(blockThoughts.addThread("", time)).to.be.revertedWith(
+	await expect(blockThoughts.addThread("")).to.be.revertedWith(
 		'Thread must have a subject.'
 	);
   });
