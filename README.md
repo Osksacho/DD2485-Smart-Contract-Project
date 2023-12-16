@@ -1,4 +1,4 @@
-# DD2485-Smart-Contract-Project
+# BlockThoughts
 Concept: As a group of two, you scope, design, and implement a smart contract protocol. You choose a smart contract language of your choice. A DApp/UX is welcome but not mandatory. You present the protocol for 30 minutes (15 min presentation + 15 min questions) during the Smart Contract Grand Oral on December 18, 2023. 
 
 The protocol proposal must be done through a pull-request before Nov 15, sunset in Stockholm.
@@ -30,6 +30,9 @@ The protocol proposal must be done through a pull-request before Nov 15, sunset 
 
 To pass, you must have the mandatory parts and at least 9 "yes".
 
+BlockThoughts is a chat forum service. A user can add their username, post threads and comment on other peoples threads. BlockThoughts is decentralized and the database is stored on a blockchain. Specifically, the protocol is written in Solidity and can run on Ethereum, however it is not deployed on mainnet yet. The repo contains a guide for deploying locally and hosting an example website to show how the protocol could be used in practice.
+
+There have been many implementations of decentralized chat forums using peer-to-peer networks such as https://retroshare.cc/ and https://getaether.net/. However, a decentralized chat forum on a blockchain network has yet to be practically implemented. This is likely due to a variety of challenges with regards to gas fees and scalability. One of the main purposes of this project was to investigate these problems.
 ## Deploy locally
 
 Start by cloning the repository and install all dependencies 
