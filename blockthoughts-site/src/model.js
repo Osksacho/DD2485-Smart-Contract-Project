@@ -44,7 +44,6 @@ class Model {
         this.selectedThreadId = ref(-1); // -1 means no thread selected
         this.currentThreadComments = ref([]);
 
-
         this.contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
         this.contractABI = [
             {
@@ -419,9 +418,8 @@ class Model {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
-            const time = new Date().toISOString();
             const signer = provider.getSigner();
-            const tx = await contract.connect(signer).addThread(subject, time);
+            const tx = await contract.connect(signer).addThread(subject);
             await tx.wait();
             await this.getThreads();
             console.log('Transaction hash:', tx.hash);
@@ -467,9 +465,8 @@ class Model {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
-            const time = new Date().toISOString();
             const signer = provider.getSigner();
-            const tx = await contract.connect(signer).addComment(this.selectedThreadId, comment, time);
+            const tx = await contract.connect(signer).addComment(this.selectedThreadId, comment);
             await tx.wait();
             await this.getComments();
             console.log('Transaction hash:', tx.hash);

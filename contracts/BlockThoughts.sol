@@ -27,13 +27,13 @@ contract BlockThoughts {
     uint64 threadCounter;
 
     /// @param _subject The subject of the thread.
-    function addThread(string memory _subject, string memory _time) public {
+    function addThread(string memory _subject) public {
         require(bytes(_subject).length > 0, "Thread must have a subject.");
         
         ThreadInfo memory newThreadInfo = ThreadInfo({
             id: threadCounter,
             subject: _subject,
-            time: _time,
+            time: block.timestamp,
             poster: msg.sender
         });
         
@@ -42,12 +42,12 @@ contract BlockThoughts {
         threadCounter++;
     }
 
-    function addComment(uint64 _threadId, string memory _value, string memory _time) public {
+    function addComment(uint64 _threadId, string memory _value) public {
         require(_threadId < threadCounter, "Invalid thread id.");
         
         Comment memory newComment = Comment({
             poster: msg.sender,
-            time: _time,
+            time: block.timestamp,
             value: _value
         });
         
