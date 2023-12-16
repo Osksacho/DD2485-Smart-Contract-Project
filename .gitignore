@@ -1,5 +1,6 @@
 node_modules
 .env
+.vscode
 
 # Hardhat files
 /cache
@@ -28,13 +29,3 @@ node_modules
 /blockthoughts-site/dist-ssr
 /blockthoughts-site/*.local
 
-# Editor directories and files
-/blockthoughts-site/.vscode/*
-/blockthoughts-site/!.vscode/extensions.json
-/blockthoughts-site/.idea
-/blockthoughts-site/.DS_Store
-/blockthoughts-site/*.suo
-/blockthoughts-site/*.ntvs*
-/blockthoughts-site/*.njsproj
-/blockthoughts-site/*.sln
-/blockthoughts-site/*.sw?
