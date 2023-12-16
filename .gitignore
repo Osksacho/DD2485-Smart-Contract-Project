@@ -12,3 +12,29 @@ node_modules
 # solidity-coverage files
 /coverage
 /coverage.json
+
+
+# Logs
+blockthoughts-site/logs
+blockthoughts-site/*.log
+blockthoughts-site/npm-debug.log*
+blockthoughts-site/yarn-debug.log*
+blockthoughts-site/yarn-error.log*
+blockthoughts-site/pnpm-debug.log*
+blockthoughts-site/lerna-debug.log*
+
+blockthoughts-site/node_modules
+blockthoughts-site/dist
+blockthoughts-site/dist-ssr
+blockthoughts-site/*.local
+
+# Editor directories and files
+blockthoughts-site/.vscode/*
+blockthoughts-site/!.vscode/extensions.json
+blockthoughts-site/.idea
+blockthoughts-site/.DS_Store
+blockthoughts-site/*.suo
+blockthoughts-site/*.ntvs*
+blockthoughts-site/*.njsproj
+blockthoughts-site/*.sln
+blockthoughts-site/*.sw?
