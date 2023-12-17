@@ -1,39 +1,34 @@
 import { defineComponent, ref } from "vue"
 
 const CommentPostingView = defineComponent({
-    props: {
-        model: Object,
+   props: {
+        submit: Function,
+        comment: String,
+        file: Object,
+        ipfs: Boolean,
+        onCommentChange: Function,
+        onFileChange: Function, 
     },
 
     setup(props) {
-        const commentText = ref("");
-
-        const postComment = () => {
-            if (commentText.value.length != 0) {
-                props.model.addComment(commentText.value);
-                
-                commentText.value = "";
-            } else {
-                console.error('Comment cannot be empty');
-            }
-        };
-
-        return { commentText, postComment };
-    },
-    render() {
-        return (
-            <div>
-                <div class="input-container">
-                    <input
-                        type="text"
-                        v-model={this.commentText}
-                        placeholder="Enter a comment here..."
-                        class="input"
-                    />
-                    <button type="submit" onClick={this.postComment}>Post</button>
+        return function render () {
+            return (
+                <div class="comment-posting">
+                    <div class="input-container">
+                        <input
+                            type="text"
+                            value={props.comment}
+                            placeholder="Enter comment here"
+                            class="thread-input"
+                            onChange={props.onCommentChange}
+                        />
+                    </div>
+                    { props.ipfs ? <input class="file-input" type="file" onChange={props.onFileChange} />: <span></span>}
+                    
+                    <button type="submit" onClick={props.submit}>Post</button>
                 </div>
-            </div>
-        );
+            );
+        };
     },
 });
 

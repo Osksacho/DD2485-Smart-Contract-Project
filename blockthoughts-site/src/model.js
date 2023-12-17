@@ -1,6 +1,10 @@
 import { ethers } from 'ethers';
 import { ref } from 'vue';
 import { create } from 'ipfs-http-client';
+import bs58 from 'bs58'
+import { Buffer } from 'buffer';
+
+let nullBytes32 = "0x" + "0".repeat(64);
 
 class UserData {
     constructor(username, image) {
@@ -12,22 +16,54 @@ function BlockChainTimeToJSDate(time) {
     return new Date(time.toNumber() * 1000);
 }
 
+function bytes32ToIpfsCid(bytes32) {
+    // Ensure bytes32 starts with '0x' and is 66 characters long (64 hex + '0x')
+    if (!bytes32.startsWith('0x') || bytes32.length !== 66 || bytes32 == nullBytes32) {
+        return "";
+    }
+
+   // Convert bytes32 hex string to a Buffer
+    const buffer = ethers.utils.arrayify(bytes32);
+
+    // Add the multihash prefix for SHA-256 (0x12 for SHA-256, 0x20 for 32 bytes)
+    const multihash = Buffer.concat([Buffer.from([0x12, 0x20]), buffer]);
+
+    // Encode the Buffer to Base58 for CIDv0
+    return bs58.encode(multihash);
+}
+
+function cidToBytes32(cid) {
+    // Decode Base58 CID (for CID v0)
+    if (cid == "")
+      return nullBytes32;
+
+    // Decode CIDv0 from Base58
+    const decoded = bs58.decode(cid);
+
+    // Extract the SHA-256 hash (32 bytes, skipping the multihash prefix)
+    const hash = decoded.slice(2); // Assuming the multihash prefix is 2 bytes
+    return ethers.utils.hexlify(hash).padEnd(66, '0');
+    return '0x' + hash.toString('hex');
+}
+
+
 class Thread {
-    constructor(id, subject, time, username) {
+    constructor(id, subject, time, username, ipfsImageBytes32 = nullBytes32) {
         this.id = parseInt(id);
         this.subject = subject;
         this.time = BlockChainTimeToJSDate(time).toLocaleString();
         this.comments = [];
         this.username = !username ? "Unknown" : username;
+        this.ipfsImageCid = bytes32ToIpfsCid(ipfsImageBytes32);
     }
 }
 
 class Comment {
-    constructor(text, time, username, ipfsImageCid = "") {
+    constructor(text, time, username, ipfsImageBytes32 = nullBytes32) {
         this.text = text;
         this.time = BlockChainTimeToJSDate(time).toLocaleString();
         this.username = !username ? "Unknown" : username;
-        this.ipfsImageCid = ipfsImageCid;
+        this.ipfsImageCid = bytes32ToIpfsCid(ipfsImageBytes32);
     }
 
 }
@@ -358,7 +394,6 @@ class Model {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
             const userData = await contract.getUserData(userAddress);
-            console.log('User Data:', userData);
             return userData;
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -391,7 +426,7 @@ class Model {
     async convertThread(threadFromContract) {
         try {
             const userdata = await this.getUserData(threadFromContract.poster);
-            return new Thread(threadFromContract.id, threadFromContract.subject, threadFromContract.time, userdata.username);
+            return new Thread(threadFromContract.id, threadFromContract.subject, threadFromContract.time, userdata.username, threadFromContract.ipfsImageRef);
         } catch (error) {
             console.error('Error converting thread:', error);
             return null;
@@ -410,7 +445,7 @@ class Model {
 
             const threadPromises = threads.map(thread => this.convertThread(thread));
             this.threads = await Promise.all(threadPromises);
-            console.log('Thread Data:', this.threads);
+            console.log(this.threads);
         } catch (error) {
             console.error('Error fetching thread data:', error);
         }
@@ -422,20 +457,17 @@ class Model {
                 throw "No ethereum provider available";
             }
             
-            const cid = "";
+            let cid = "";
             if (file != null) {
                 const added = await this.ipfs.add(file);
                 cid = added.cid.toString();
-                console.log("ADDED CID: ", cid);
             }
-
-            const ipfsImageRef = ethers.utils.formatBytes32String(cid);
-
+            const cidBytes = cidToBytes32(cid);
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
             const signer = provider.getSigner();
-            const tx = await contract.connect(signer).addThread(subject, ipfsImageRef);
+            const tx = await contract.connect(signer).addThread(subject, cidBytes);
             await tx.wait();
             await this.getThreads();
             console.log('Transaction hash:', tx.hash);
@@ -447,7 +479,7 @@ class Model {
     async convertComment(commentFromContract) {
         try {
             const userdata = await this.getUserData(commentFromContract.poster);
-            return new Comment(commentFromContract.value, commentFromContract.time, userdata.username);
+            return new Comment(commentFromContract.value, commentFromContract.time, userdata.username, commentFromContract.ipfsImageRef);
         } catch (error) {
             console.error('Error converting comment:', error);
             return null;
@@ -472,17 +504,24 @@ class Model {
         }
     }
 
-    async addComment(comment) {
+    async addComment(comment, file) {
         try {
             if (!window.ethereum) {
                 throw "No ethereum provider available";
             }
 
+            let cid = "";
+            if (file != null) {
+                const added = await this.ipfs.add(file);
+                cid = added.cid.toString();
+            }
+            const cidBytes = cidToBytes32(cid);
+
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
             const signer = provider.getSigner();
-            const tx = await contract.connect(signer).addComment(this.selectedThreadId, comment);
+            const tx = await contract.connect(signer).addComment(this.selectedThreadId, comment, cidBytes);
             await tx.wait();
             await this.getComments();
             console.log('Transaction hash:', tx.hash);

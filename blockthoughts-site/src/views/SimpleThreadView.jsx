@@ -8,11 +8,12 @@ const SimpleThreadView = defineComponent({
 
     setup(props) {
         function getImage() {
-            const imgLink = "https://ipfs.io/ipfs/" + props.comment.ipfsImageCid;
-            if (props.comment.ipfsImageCid != "")
+            const imgLink = "https://ipfs.io/ipfs/" + props.thread.ipfsImageCid;
+            console.log("img: ", imgLink);
+            if (props.thread.ipfsImageCid != "")
                 return <img src={imgLink} class="smallimg"></img>
             else
-                return null;
+                return <span/>;
         }
 
         return function render() {
@@ -22,6 +23,7 @@ const SimpleThreadView = defineComponent({
                         <span class="time">{props.thread.time}</span>
                     </div>
                     <div class="thread-content">
+                        {getImage()} 
                         <a>{props.thread.subject}</a>
                         <p>Poster: {props.thread.username}</p>
                     </div>

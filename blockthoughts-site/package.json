@@ -9,11 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "bs58": "^5.0.0",
+    "buffer": "^6.0.3",
+    "cids": "^1.1.9",
     "ethers": "^5.7.2",
+    "ipfs-http-client": "^60.0.1",
+    "multihashing-async": "^2.1.4",
     "vue": "^3.3.8",
     "vue-router": "^4.1.6",
-    "web3": "^4.3.0",
-    "ipfs-http-client": "^60.0.1"
+    "web3": "^4.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.0",

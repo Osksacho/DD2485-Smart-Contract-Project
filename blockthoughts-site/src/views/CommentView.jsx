@@ -8,13 +8,15 @@ const CommentView = defineComponent({
     setup(props) {
         function getImage() {
             const imgLink = "https://ipfs.io/ipfs/" + props.comment.ipfsImageCid;
+            console.log("Comment imagelink: ", imgLink);
             if (props.comment.ipfsImageCid != "")
                 return <img src={imgLink} class="smallimg"></img>
             else
-                return null;
+                return <span/>;
         }
 
         return function render() {
+            console.log(props.comment);
             return (
                 <div class="comment">
                     <div class="comment-header">

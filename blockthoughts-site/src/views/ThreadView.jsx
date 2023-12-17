@@ -1,6 +1,6 @@
 import { defineComponent } from "vue"
 import CommentView from "./CommentView";
-import CommentPostingView from "./CommentPostingView";
+import CommentPoster from "../components/CommentPosterPresenter";
 
 const ThreadView = defineComponent({
     props: {
@@ -11,6 +11,7 @@ const ThreadView = defineComponent({
 
     setup(props) {
         props.model.getComments();
+        console.log(props.model.currentThreadComments);
 
         return function render() {
             function handleReturnClick() {
@@ -45,7 +46,7 @@ const ThreadView = defineComponent({
                     )}
 
                     <div>
-                        <CommentPostingView model={props.model} />
+                        <CommentPoster model={props.model} />
                     </div>
                 </div>
             );
