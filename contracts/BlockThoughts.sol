@@ -33,6 +33,7 @@ contract BlockThoughts {
 
     /// @notice Add a thread. The poster will be the sender address.
     /// @param subject The subject of the thread.
+    /// @param cid Content id to ipfs image
     function addThread(string memory subject, bytes32 cid) public {
         require(bytes(subject).length > 0, "Thread must have a subject.");
         
@@ -68,6 +69,7 @@ contract BlockThoughts {
     /// @notice Add a comment. The poster will be the sender address.
     /// @param threadId The id of the thread.
     /// @param value content of the comment.
+    /// @param cid Content id to ipfs image
     function addComment(uint64 threadId, string memory value, bytes32 cid) public {
         require(threadId < threadCounter, "Invalid thread id.");
         
