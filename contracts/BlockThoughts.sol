@@ -47,6 +47,10 @@ contract BlockThoughts {
         // The comments array is automatically initialized as an empty array in storage
         threads[threadCounter] = newThreadInfo;
         threadCounter++;
+
+        if(threadCounter == 1){
+            addComment(0, "You made the first comment! Have this: \xf0\x9f\xa5\x9a", bytes32(0));
+        }
     }
 
     /// @notice Get all threads.
