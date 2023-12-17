@@ -43,7 +43,6 @@ function cidToBytes32(cid) {
     // Extract the SHA-256 hash (32 bytes, skipping the multihash prefix)
     const hash = decoded.slice(2); // Assuming the multihash prefix is 2 bytes
     return ethers.utils.hexlify(hash).padEnd(66, '0');
-    return '0x' + hash.toString('hex');
 }
 
 
@@ -402,25 +401,25 @@ class Model {
     }
 
     async createUserData(username) {
-        const ipfsImageRef = ethers.utils.formatBytes32String('ipfsHash')
+      const ipfsImageRef = ethers.utils.formatBytes32String('ipfsHash')
 
-        try {
-            if (!window.ethereum) {
-                throw "No ethereum provider available";
-            }
+      try {
+          if (!window.ethereum) {
+              throw "No ethereum provider available";
+          }
 
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
-            const signer = provider.getSigner();
-            const tx = await contract.connect(signer).createUserData(username, ipfsImageRef);
-            await tx.wait();
+          const signer = provider.getSigner();
+          const tx = await contract.connect(signer).createUserData(username, ipfsImageRef);
+          await tx.wait();
 
-            this.userData.username = username;
-            console.log('Transaction hash:', tx.hash);
-        } catch (error) {
-            console.error('Error:', error);
-        }
+          this.userData.username = username;
+          console.log('Transaction hash:', tx.hash);
+      } catch (error) {
+          console.error('Error:', error);
+      }
     }
 
     async convertThread(threadFromContract) {
@@ -463,6 +462,9 @@ class Model {
                 cid = added.cid.toString();
             }
             const cidBytes = cidToBytes32(cid);
+
+            console.log("Bytes: ", cidBytes);
+
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             const contract = new ethers.Contract(this.contractAddress, this.contractABI, provider);
 
