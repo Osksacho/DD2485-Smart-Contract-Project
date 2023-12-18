@@ -54,14 +54,16 @@ describe('BlockThoughs Contract Userdata tests', function () {
   });
   
   it('Should be possible to add and retrieve threads', async function () {
+	const Bytes32 = "0x" + "1".repeat(64);
 	const nullBytes32 = "0x" + "0".repeat(64);
-    await blockThoughts.addThread("My thoughts on tests", nullBytes32);
+    await blockThoughts.addThread("My thoughts on tests", Bytes32);
 	await blockThoughts.addThread("Everything about cars", nullBytes32);
+	await blockThoughts.addThread("More Ideas", Bytes32);
 	
-	[id, sub] = (await blockThoughts.getThreads())[0];
+	[id, sub] = (await blockThoughts.getThreads())[2];
 	
-    await expect(id).to.equal(0);
-	await expect(sub).to.equal("My thoughts on tests");
+    await expect(id).to.equal(2);
+	await expect(sub).to.equal("More Ideas");
   });
   
   it('Should be possible to add and retrieve comments', async function () {
@@ -73,6 +75,7 @@ describe('BlockThoughs Contract Userdata tests', function () {
 	await blockThoughts.addThread("Everything about cars", ipfsImageRef);
 	
 	await blockThoughts.addComment(1, value, nullBytes32);
+	await blockThoughts.addComment(1, value, ipfsImageRef);
 	
     await expect((await blockThoughts.getComments(1))[0].value).to.equal(value);
 
