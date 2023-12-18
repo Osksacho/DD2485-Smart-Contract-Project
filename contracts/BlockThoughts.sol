@@ -1,4 +1,4 @@
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.19;
 
 /// @title BlockThoughts
 /// @author Oskar Svanström & Felix Qvarfordt
@@ -12,6 +12,12 @@ contract BlockThoughts {
 		address poster;
         uint time;
         string value;
+	}
+	
+	struct FullComment {
+		address poster;
+        uint time;
+        string value;
 		bytes32 ipfsImageRef;
 	}
 	
@@ -19,14 +25,23 @@ contract BlockThoughts {
 		uint64 id;
         string subject;
         uint time;
-		bytes32 ipfsImageRef;
 		address poster;
 	}
 
-    mapping(uint64 => ThreadInfo) public threads;
-	mapping(uint64 => Comment[]) public threadComments;
+	struct Thread {
+		uint64 id;
+        string subject;
+        uint time;
+		address poster;
+		bytes32 ipfsImageRef;
+	}
+
+    mapping(uint => ThreadInfo) public threads;
+	mapping(uint => Comment[]) public threadComments;
     mapping(address => UserData) public usersData;
     mapping(string => bool) private usernameExists;
+	mapping(uint => bytes32) public threadImage;
+	mapping(uint => bytes32) public commentImage;
 	
     uint64 threadCounter;
 
@@ -41,9 +56,12 @@ contract BlockThoughts {
             id: threadCounter,
             subject: subject,
             time: block.timestamp,
-            poster: msg.sender,
-			ipfsImageRef: cid
+            poster: msg.sender
         });
+		
+		if (cid != bytes32(0)) {
+			threadImage[threadCounter] = cid;
+		}
         
         // The comments array is automatically initialized as an empty array in storage
         threads[threadCounter] = newThreadInfo;
@@ -56,11 +74,18 @@ contract BlockThoughts {
 
     /// @notice Get all threads.
     /// @return Array of ThreadInfo (id, subject, poster)
-    function getThreads() public view returns (ThreadInfo[] memory) {
-		ThreadInfo[] memory infos = new ThreadInfo[](threadCounter);
+    function getThreads() public view returns (Thread[] memory) {
+		Thread[] memory infos = new Thread[](threadCounter);
 
 		for (uint64 i = 0; i < threadCounter; i++) {
-			infos[i] = threads[i];
+			infos[i].id = threads[i].id;
+			infos[i].subject = threads[i].subject;
+			infos[i].time = threads[i].time;
+			infos[i].poster = threads[i].poster;
+			
+			if (threadImage[i] != bytes32(0)) {
+				infos[i].ipfsImageRef = threadImage[i];
+			}
 		}
 
 		return infos;
@@ -76,19 +101,37 @@ contract BlockThoughts {
         Comment memory newComment = Comment({
             poster: msg.sender,
             time: block.timestamp,
-            value: value,
-			ipfsImageRef: cid
+            value: value
         });
-        
+		
+		if (cid != bytes32(0)) {
+			uint id = threadComments[threadId].length;
+			commentImage[id] = cid;
+		}
+	
         threadComments[threadId].push(newComment);
     }
 
     /// @notice Get all comments for a thread with id.
     /// @param threadId The id of the thread. Can fetch this with getThreads()
     /// @return Array of Comments (poster, time, value)
-    function getComments (uint64 threadId) public view returns (Comment[] memory) {
+    function getComments (uint64 threadId) public view returns (FullComment[] memory) {
         require(threadId < threadCounter, "Invalid thread id.");
-		return threadComments[threadId];
+		
+		uint length = threadComments[threadId].length;
+		FullComment[] memory comments = new FullComment[](length);
+
+		for (uint i = 0; i < length; i++) {
+			comments[i].value = threadComments[threadId][i].value;
+			comments[i].time = threadComments[threadId][i].time;
+			comments[i].poster = threadComments[threadId][i].poster;
+			
+			if (commentImage[i] != bytes32(0)) {
+				comments[i].ipfsImageRef = commentImage[i];
+			}
+		}
+
+		return comments;
     }
 
     /// @notice Get address user data, returns empty data if not defined.
